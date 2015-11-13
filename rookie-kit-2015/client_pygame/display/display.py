@@ -11,7 +11,8 @@ import os
 from pygame.locals import *
 import display
 
-class Display(BaseDisplay):
+
+class Display(display.BaseDisplay):
     """
     This class controls all of the drawing of the screen
     for your game.  The process of drawing a screen is
@@ -87,13 +88,13 @@ class Display(BaseDisplay):
         Configure display-wide settings and one-time
         setup work here.
         """
-        BaseDisplay.__init__(self, width, height)
+        display.BaseDisplay.__init__(self, width, height)
 
         # There are other fonts available, but they are not
         # the same on every computer.  You can read more about
         # fonts at http://www.pygame.org/docs/ref/font.html
         self.font_size = 12
-        self.font = pygame.font.SysFont("Courier New",self.font_size)
+        self.font = display.pygame.font.SysFont("Courier New", self.font_size)
 
         # Colors are specified as a triple of integers from 0 to 255.
         # The values are how much red, green, and blue to use in the color.
@@ -107,6 +108,10 @@ class Display(BaseDisplay):
         self.wall_color       = (255, 255, 255)
         self.text_color       = (255, 255, 255)
         self.background_color = (0, 0, 0)
+        #file_path = os.path.join('display', 'images', 'alpaca.png')
+        #image = pygame.image.load(file_path)
+        #image = image.convert_alpha()
+
         return
 
     def paint_pregame(self, surface, control):
@@ -114,7 +119,7 @@ class Display(BaseDisplay):
         Draws the display before the user selects the game type.
         """
         # background
-        rect = pygame.Rect(0, 0, self.width, self.height)
+        rect = display.pygame.Rect(0, 0, self.width, self.height)
         surface.fill(self.background_color, rect)
         # text message in center of screen
         s = "Press 'd' for dual player, 's' for single player,"
@@ -134,7 +139,7 @@ class Display(BaseDisplay):
         to join the game.
         """
         # background
-        rect = pygame.Rect(0, 0, self.width, self.height)
+        rect = display.pygame.Rect(0, 0, self.width, self.height)
         surface.fill(self.background_color, rect)
         # text message in center of screen
         s = "Waiting for opponent to connect."
@@ -148,7 +153,7 @@ class Display(BaseDisplay):
         Draws the display after the game starts.
         """
         # background
-        rect = pygame.Rect(0, 0, self.width, self.height)
+        rect = display.pygame.Rect(0, 0, self.width, self.height)
         surface.fill(self.background_color, rect)
             
         # draw each object
@@ -200,7 +205,11 @@ class Display(BaseDisplay):
         Draws walls.
         """
         rect = self.obj_to_rect(obj)
-        pygame.draw.rect(surface, self.wall_color, rect)
+        file_path = os.path.join('display', 'images', 'rockfriend.png')
+        image = pygame.image.load(file_path)
+        image = image.convert_alpha()
+        display.pygame.draw.rect(surface, self.wall_color, rect)
+        surface.blit(image, rect)
         return
         
     def paint_npc(self, surface, engine, control, obj):
@@ -210,7 +219,11 @@ class Display(BaseDisplay):
         if obj.is_alive():
             color = self.npc_color
             rect = self.obj_to_rect(obj)
-            pygame.draw.rect(surface, color, rect)
+            file_path = os.path.join('display', 'images', 'smallcottoncandyfriend.png')
+            image = pygame.image.load(file_path)
+            image = image.convert_alpha()
+            display.pygame.draw.rect(surface, color, rect)
+            surface.blit(image, rect)
         return
         
     def paint_missile(self, surface, engine, control, obj):
@@ -220,7 +233,12 @@ class Display(BaseDisplay):
         if obj.is_alive():
             color = self.missile_color
             rect = self.obj_to_rect(obj)
-            pygame.draw.rect(surface, color, rect)
+            display.pygame.draw.rect(surface, color, rect)
+            file_path = os.path.join('display', 'images', 'firething.png')
+            image = pygame.image.load(file_path)
+            image = image.convert_alpha()
+            display.pygame.draw.rect(surface, color, rect)
+            surface.blit(image, rect)
         return
         
     def paint_player(self, surface, engine, control, obj):
@@ -245,7 +263,6 @@ class Display(BaseDisplay):
                 image = image.convert_alpha()
                 display.pygame.draw.rect(surface, color, rect)
                 surface.blit(image, rect)
-            pygame.draw.rect(surface, color, rect)
         return
 
     def paint_game_status(self, surface, engine, control):
@@ -285,4 +302,3 @@ class Display(BaseDisplay):
                 position_y = self.height - STATUS_BAR_HEIGHT + 6 * self.font_size / 2
                 self.draw_text_left(surface, s, self.text_color, position_x, position_y, self.font)
         return
-
