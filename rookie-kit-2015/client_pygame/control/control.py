@@ -4,6 +4,7 @@
 #
 
 import pygame
+import math
 from client.base_control import *
 
 class Control(BaseControl):
@@ -13,15 +14,15 @@ class Control(BaseControl):
     mouse clicks, and mouse motion to receive input
     from the user.
 
-    You can also add calculations in this code to 
+    You can also add calculations in this code to
     control the behavior of your player based on the
     state of the game.
 
     The 4 methods below have specific purposes:
     __init__ is used to create an variables (data members) that
         you need to remember here and in the display class.
-    pregame_control is used to get user input before you join 
-        a game.  This is most important in deciding what kind 
+    pregame_control is used to get user input before you join
+        a game.  This is most important in deciding what kind
         of game the user would like to join.
     game_input_control is used to get user input during a running
         game.  This is most important in allowing the user to
@@ -72,7 +73,7 @@ class Control(BaseControl):
 
     def __init__(self, width, height):
         """Create any control variables in this method"""
-        
+
         BaseControl.__init__(self, width, height)
         # used to control display of individual item information
         self.show_info = False
@@ -102,7 +103,7 @@ class Control(BaseControl):
         elif pygame.K_v in newkeys:
             self.set_state(CONTROL_STATE_WANT_VIEW)
         return
-        
+
     def game_input_control(self, engine, keys, newkeys, buttons, newbuttons, mouse_position):
         """
         This method is called every frame while the game is
@@ -110,40 +111,40 @@ class Control(BaseControl):
         to make changes to the game engine based on the
         user input.
         """
-        
+
         (mouse_x, mouse_y) = mouse_position
-        
+
         if pygame.K_UP in newkeys or pygame.K_w in newkeys:
             engine.set_player_direction(270)
-            engine.set_missile_direction(270)
+
         elif pygame.K_DOWN in newkeys or pygame.K_s in newkeys:
             engine.set_player_direction(90)
-            engine.set_missile_direction(90)
+
         elif pygame.K_LEFT in newkeys or pygame.K_a in newkeys:
             engine.set_player_direction(180)
-            engine.set_missile_direction(180)
+
         elif pygame.K_RIGHT in newkeys or pygame.K_d in newkeys:
             engine.set_player_direction(0)
-            engine.set_missile_direction(0)
+
         elif (pygame.K_RIGHT in keys and pygame.K_UP in keys) or (pygame.K_d in keys and pygame.K_w in keys):
             engine.set_player_direction(315)
-            engine.set_missile_direction(315)
+
         elif (pygame.K_RIGHT in keys and pygame.K_DOWN in keys) or (pygame.K_d in keys and pygame.K_s in keys):
             engine.set_player_direction(45)
-            engine.set_missile_direction(45)
+
         elif (pygame.K_LEFT in keys and pygame.K_UP in keys) or (pygame.K_a in keys and pygame.K_w in keys):
             engine.set_player_direction(225)
-            engine.set_missile_direction(225)
+
         elif (pygame.K_LEFT in keys and pygame.K_DOWN in keys) or (pygame.K_a in keys and pygame.K_s in keys):
             engine.set_player_direction(135)
-            engine.set_missile_direction(135)
+
 
 
         if pygame.K_1 in newkeys:
             engine.set_player_speed_stop()
         elif pygame.K_2 in newkeys:
             engine.set_player_speed_slow()
-            
+
         if pygame.K_q in newkeys:
             engine.set_missile_range_none()
         elif pygame.K_w in newkeys:
@@ -153,15 +154,35 @@ class Control(BaseControl):
             engine.set_missile_power_none()
         elif pygame.K_k in newkeys:
             engine.set_missile_power_low()
-                
-        if pygame.K_SPACE in newkeys:
+
+        if 1 in newbuttons:
             engine.fire_missile()
 
         if pygame.K_i in newkeys:
             self.show_info = not self.show_info
 
+
+        oid = engine.get_player_oid()
+        if oid > 0:
+            player = engine.get_object(oid)
+            if player != None:
+                (x1,y1) = player.get_center()
+                (x2,y2) = mouse_position
+                dy = y2 - y1
+                dx = x2 - x1
+                radians = math.atan2(dy, dx)
+
+                radians %= 2 * math.pi
+
+                degrees = math.degrees(radians)
+
+                engine.set_missile_direction(degrees)
+
+
+
+
         return
-        
+
     def game_control(self, engine):
         """
         This method is called every frame while the game is
