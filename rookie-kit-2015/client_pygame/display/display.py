@@ -10,6 +10,7 @@ from client.base_display import BaseDisplay
 import os
 from pygame.locals import *
 import display
+from pygame import mixer
 
 
 class Display(display.BaseDisplay):
@@ -89,6 +90,12 @@ class Display(display.BaseDisplay):
         setup work here.
         """
         display.BaseDisplay.__init__(self, width, height)
+        # music
+        pygame.mixer.pre_init(22050,-16, 2, 4096)
+        pygame.mixer.init(frequency=22050, size=-16, channels=2, buffer=4096)
+        pygame.init()
+        pygame.mixer.music.load('C:/Users/Gold/Desktop/rookie-kit-2015/client_pygame/display/music/Hello.mp3')
+        pygame.mixer.music.play(-1)
 
         # There are other fonts available, but they are not
         # the same on every computer.  You can read more about
